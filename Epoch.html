@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EPOCH — Guide Civilization From Fire to the Stars</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Lora:ital,wght@0,400;0,600;1,400&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0D0E14;--bg2:#12141E;--card:#181A26;--card2:#1E2030;
+  --border:rgba(200,150,46,0.15);--border2:rgba(200,150,46,0.08);
+  --gold:#C8962E;--gold2:#B5832A;--gold-dim:rgba(200,150,46,0.12);
+  --ivory:#F0E4C4;--ivory2:#C8B89A;
+  --muted:#6B5E47;--muted2:#7A6B52;
+  --text:#E8D4A8;
+  --ft:'Cinzel',serif;--fb:'Lora',serif;--fm:'Source Code Pro',monospace;
+}
+html,body{width:100%;min-height:100%;background:var(--bg);color:var(--text);font-family:var(--fb)}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--gold2);border-radius:2px}
+
+/* PAGE SYSTEM */
+.page{display:none;min-height:100vh;width:100%;flex-direction:column}
+.page.active{display:flex}
+#simulation.active{flex-direction:row!important;height:100vh;overflow:hidden}
+
+/* HERO */
+#hero{align-items:center;justify-content:center;position:relative;overflow:hidden;background:radial-gradient(ellipse at 50% 60%,#1a1610 0%,var(--bg) 70%)}
+.hero-bg{position:absolute;inset:0;opacity:.06;pointer-events:none}
+.hero-inner{position:relative;z-index:10;text-align:center;display:flex;flex-direction:column;align-items:center;gap:2.5rem;animation:fadeUp 1.4s ease-out both}
+.hero-title{font-family:var(--ft);font-size:clamp(3.5rem,13vw,9rem);font-weight:900;color:var(--gold);letter-spacing:.25em;line-height:1;text-shadow:0 0 80px rgba(200,150,46,.3)}
+.hero-sub{font-family:var(--fb);font-style:italic;font-size:clamp(.9rem,2vw,1.3rem);color:var(--ivory2);max-width:480px;animation:fadeIn 2s .8s ease-out both;opacity:0}
+.era-strip{display:flex;gap:.4rem;flex-wrap:wrap;justify-content:center;animation:fadeIn 2s 1.4s ease-out both;opacity:0}
+.era-dot{font-family:var(--fm);font-size:.58rem;color:var(--muted2);letter-spacing:.1em;text-transform:uppercase}
+.era-sep{color:var(--gold);opacity:.4}
+.hero-btns{display:flex;gap:1.25rem;flex-wrap:wrap;justify-content:center;animation:fadeIn 2s 1.8s ease-out both;opacity:0}
+.hero-nav{position:absolute;bottom:1.75rem;left:0;right:0;display:flex;justify-content:center;gap:2rem}
+.hero-nav button{font-family:var(--fm);font-size:.62rem;color:var(--muted2);letter-spacing:.15em;text-transform:uppercase;background:none;border:none;cursor:pointer;transition:color .2s}
+.hero-nav button:hover{color:var(--gold)}
+.erase-wrap{margin-top:.25rem}
+.erase-link{background:none;font-family:var(--fm);font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;color:#6b3a3a;cursor:pointer;padding:.35rem .9rem;border:1px solid rgba(180,60,60,.25);transition:color .2s,border-color .2s,background .2s}
+.erase-link:hover{color:#e57373;border-color:rgba(229,115,115,.5);background:rgba(229,115,115,.06)}
+
+/* BUTTONS */
+.btn{padding:.8rem 2.2rem;font-family:var(--ft);font-size:.72rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;border:none;cursor:pointer;transition:transform .15s,box-shadow .2s,background .2s;clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px))}
+.btn-gold{background:var(--gold);color:#0D0E14}
+.btn-gold:hover{background:#D9A83A;transform:translateY(-1px);box-shadow:0 4px 20px rgba(200,150,46,.35)}
+.btn-outline{background:transparent;color:var(--gold);border:1px solid var(--gold)}
+.btn-outline:hover{background:var(--gold-dim);transform:translateY(-1px)}
+.btn-danger{background:rgba(229,115,115,.12);color:#e57373;border:1px solid rgba(229,115,115,.5)}
+.btn-danger:hover{background:rgba(229,115,115,.22);transform:translateY(-1px)}
+.btn-ghost{background:transparent;color:var(--muted2);border:1px solid var(--border)}
+.btn-ghost:hover{color:var(--ivory);border-color:var(--ivory2)}
+
+/* PARTICLES */
+.particle{position:absolute;width:2px;height:2px;background:var(--gold);border-radius:50%;opacity:0;animation:drift var(--dur,8s) var(--del,0s) ease-in-out infinite}
+@keyframes drift{0%{opacity:0;transform:translateY(0) scale(.5)}20%{opacity:.7}80%{opacity:.4}100%{opacity:0;transform:translateY(-80px) scale(1.2)}}
+
+/* SIDEBAR */
+.sidebar{width:276px;min-width:250px;background:var(--card);display:flex;flex-direction:column;overflow-y:auto;padding:1.5rem;flex-shrink:0}
+.sidebar-l{border-right:1px solid var(--border)}
+.sidebar-r{border-left:1px solid var(--border)}
+.sidebar-title{font-family:var(--ft);font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);border-bottom:1px solid var(--border);padding-bottom:.6rem;margin-bottom:1.5rem;text-align:center}
+
+/* METRICS */
+.metric{margin-bottom:1rem}
+.metric-hd{display:flex;justify-content:space-between;font-family:var(--fm);font-size:.58rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted2);margin-bottom:.28rem}
+.metric-hd span:last-child{color:var(--gold)}
+.metric-track{height:3px;background:rgba(200,150,46,.1);border-radius:2px;overflow:hidden}
+.metric-fill{height:100%;background:linear-gradient(90deg,var(--gold2),var(--gold));border-radius:2px;transition:width .7s cubic-bezier(.4,0,.2,1)}
+.humanity-wrap{margin-top:auto;padding-top:1.25rem;border-top:1px solid var(--border);display:flex;flex-direction:column;align-items:center;gap:.75rem}
+.humanity-lbl{font-family:var(--fm);font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted2)}
+.humanity-ring{position:relative;width:86px;height:86px;display:flex;align-items:center;justify-content:center}
+.humanity-ring svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.ring-bg{stroke:rgba(200,150,46,.1);fill:none}
+.ring-fg{fill:none;stroke:var(--gold);stroke-linecap:round;transition:stroke-dashoffset .9s ease-out}
+.humanity-score{font-family:var(--fm);font-size:1.5rem;color:var(--gold);position:relative;z-index:1}
+
+/* SIM MAIN */
+.sim-main{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative;background:var(--bg2)}
+.sim-map-bg{position:absolute;inset:0;opacity:.14;pointer-events:none;display:flex;align-items:center;justify-content:center}
+.sim-map-bg svg{width:100%;height:100%}
+.sim-nav{position:absolute;top:0;right:0;display:flex;z-index:50}
+.sim-nav button{font-family:var(--fm);font-size:.53rem;letter-spacing:.1em;text-transform:uppercase;padding:.5rem .85rem;background:none;border:none;border-left:1px solid var(--border2);color:var(--muted2);cursor:pointer;transition:color .2s,background .2s}
+.sim-nav button:hover{color:var(--gold);background:var(--gold-dim)}
+.sim-nav button.danger:hover{color:#e57373;background:rgba(229,115,115,.06)}
+.sim-hdr{padding:1.75rem 2rem 1.25rem;text-align:center;border-bottom:1px solid var(--border2);position:relative;z-index:2;background:linear-gradient(to bottom,var(--bg2),transparent)}
+.sim-era-name{font-family:var(--ft);font-size:2rem;font-weight:700;color:var(--gold)}
+.sim-era-period{font-family:var(--fm);font-size:.63rem;letter-spacing:.2em;color:var(--muted2);margin-top:.28rem;text-transform:uppercase}
+.sim-body{flex:1;overflow-y:auto;display:flex;align-items:center;justify-content:center;padding:2rem;position:relative;z-index:2}
+
+/* DECISION CARD */
+.decision-card{width:100%;max-width:580px;background:rgba(24,26,38,.88);border:1px solid var(--border);padding:2.5rem;backdrop-filter:blur(4px);animation:fadeUp .45s ease-out both}
+.decision-title{font-family:var(--ft);font-size:1.45rem;color:var(--gold);margin-bottom:.85rem;line-height:1.3}
+.decision-desc{font-family:var(--fb);font-size:1rem;line-height:1.75;color:var(--ivory2);margin-bottom:1.75rem}
+.choice-btn{width:100%;text-align:left;padding:1rem 1.2rem;background:var(--card2);border:1px solid var(--border2);color:var(--text);cursor:pointer;margin-bottom:.7rem;display:flex;flex-direction:column;gap:.22rem;transition:border-color .2s,background .2s,transform .15s;font-family:inherit}
+.choice-btn:hover{border-color:rgba(200,150,46,.45);background:rgba(200,150,46,.06);transform:translateX(4px)}
+.choice-label{font-family:var(--ft);font-size:.92rem;color:var(--gold)}
+.choice-desc{font-family:var(--fb);font-size:.82rem;color:var(--muted2);line-height:1.4}
+.custom-toggle{width:100%;background:none;border:none;border-top:1px solid var(--border2);color:var(--muted2);font-family:var(--fm);font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;padding:.9rem 0 0;margin-top:.5rem;transition:color .2s}
+.custom-toggle:hover{color:var(--gold)}
+.custom-area{display:none;margin-top:1.2rem;border-top:1px solid var(--border2);padding-top:1.2rem}
+.custom-area.open{display:block;animation:fadeIn .3s ease-out}
+.custom-textarea{width:100%;background:var(--card);border:1px solid var(--border2);color:var(--text);font-family:var(--fb);font-size:.88rem;padding:.7rem;resize:none;height:88px;margin-bottom:.7rem;outline:none;transition:border-color .2s}
+.custom-textarea:focus{border-color:rgba(200,150,46,.4)}
+.custom-textarea::placeholder{color:var(--muted)}
+
+/* ERA COMPLETE */
+.era-complete{text-align:center;max-width:460px;width:100%;background:rgba(24,26,38,.92);border:1px solid var(--border);padding:3rem 2.5rem;animation:fadeUp .55s ease-out both}
+.era-orb{width:70px;height:70px;border-radius:50%;border:1px solid var(--gold);display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem}
+.era-orb span{font-family:var(--ft);font-size:1.35rem;color:var(--gold)}
+.era-complete h2{font-family:var(--ft);font-size:1.7rem;color:var(--ivory);margin-bottom:.7rem}
+.era-complete p{color:var(--muted2);line-height:1.8;font-size:.93rem;margin-bottom:2rem}
+
+/* TIMELINE */
+.tl-line{position:relative;border-left:1px solid var(--border);margin-left:.9rem;padding-bottom:1rem}
+.tl-item{position:relative;padding:0 0 1.75rem 1.4rem}
+.tl-node{position:absolute;left:-5px;top:4px;width:9px;height:9px;border-radius:50%;background:var(--card);border:1px solid var(--border);transition:all .35s}
+.tl-node.past{background:var(--gold);border-color:var(--gold)}
+.tl-node.current{background:var(--gold);border-color:var(--gold);box-shadow:0 0 10px rgba(200,150,46,.5);animation:pulse 2s ease-in-out infinite}
+.tl-era-name{font-family:var(--ft);font-size:.83rem}
+.tl-era-name.current{color:var(--gold)}
+.tl-era-name.past{color:var(--ivory2);opacity:.7}
+.tl-era-name.future{color:var(--muted);opacity:.4}
+.tl-period{font-family:var(--fm);font-size:.56rem;color:var(--muted);margin-top:.18rem;letter-spacing:.08em}
+.tl-event{margin-top:.45rem;font-size:.68rem;padding:.35rem .55rem;background:rgba(200,150,46,.04);border:1px solid var(--border2);color:var(--muted2);line-height:1.4}
+
+/* ACHIEVEMENTS */
+.ach-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(275px,1fr));gap:1.2rem}
+.ach-card{padding:1.4rem;border:1px solid var(--border2);background:var(--card);display:flex;align-items:flex-start;gap:.9rem;opacity:.38;filter:grayscale(1);transition:border-color .3s,box-shadow .3s}
+.ach-card.unlocked{opacity:1;filter:none;border-color:rgba(200,150,46,.4);box-shadow:0 0 18px rgba(200,150,46,.08)}
+.ach-icon{width:46px;height:46px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.25rem;background:rgba(200,150,46,.08);border:1px solid var(--border)}
+.ach-card.unlocked .ach-icon{background:rgba(200,150,46,.15)}
+.ach-title{font-family:var(--ft);font-size:.95rem;color:var(--ivory);margin-bottom:.28rem}
+.ach-desc{font-size:.78rem;color:var(--muted2);line-height:1.4}
+.ach-badge{font-family:var(--fm);font-size:.52rem;color:var(--gold);margin-top:.45rem;letter-spacing:.1em}
+
+/* HISTORY */
+.history-cols{display:grid;grid-template-columns:1fr 1fr;gap:2rem;flex:1}
+.history-col-title{font-family:var(--ft);font-size:1.15rem;text-align:center;padding-bottom:.7rem;margin-bottom:1.2rem}
+.history-col-title.actual{color:var(--muted2);border-bottom:1px solid var(--border2)}
+.history-col-title.yours{color:var(--gold);border-bottom:1px solid rgba(200,150,46,.3)}
+.hec{padding:1.2rem;border:1px solid var(--border2);background:var(--card);margin-bottom:1rem}
+.hec.yours-hec{border-color:rgba(61,90,128,.3);background:rgba(61,90,128,.05)}
+.hec-name{font-family:var(--ft);font-size:.92rem;color:var(--ivory);margin-bottom:.22rem}
+.hec-period{font-family:var(--fm);font-size:.55rem;color:var(--muted);letter-spacing:.1em;margin-bottom:.7rem}
+.hec-body{font-size:.78rem;color:var(--muted2);line-height:1.6}
+.hec-choice{font-size:.73rem;color:var(--ivory2);padding:.18rem 0}
+
+/* PRESENTATION */
+.pres-brand{font-family:var(--ft);font-size:3.5rem;font-weight:900;color:var(--gold);letter-spacing:.25em;text-align:center;text-shadow:0 0 40px rgba(200,150,46,.25)}
+.pres-sub{font-family:var(--fb);font-style:italic;color:var(--muted2);text-align:center;margin-bottom:2.5rem}
+.pres-content{max-width:840px;width:100%}
+.pres-card{background:var(--card);border:1px solid var(--border);padding:1.75rem;margin-bottom:1.4rem}
+.pres-card-lbl{font-family:var(--fm);font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted2);margin-bottom:.45rem}
+.pres-card-val{font-family:var(--ft);font-size:1.7rem;color:var(--ivory)}
+.pres-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.4rem}
+.pres-stat{background:var(--card);border:1px solid var(--border);padding:1.4rem 1rem;text-align:center}
+.pres-stat-lbl{font-family:var(--fm);font-size:.52rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted2);margin-bottom:.45rem}
+.pres-stat-val{font-family:var(--fm);font-size:2.4rem;color:var(--gold)}
+.pres-proj{background:var(--card);border:1px solid var(--border);padding:1.75rem;margin-bottom:1.4rem}
+.pres-proj-title{font-family:var(--ft);font-size:.95rem;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;border-bottom:1px solid var(--border2);padding-bottom:.7rem;margin-bottom:1.2rem}
+.pres-proj-text{font-family:var(--fb);font-size:.97rem;color:var(--muted2);line-height:1.85}
+.pres-proj-text strong{color:var(--ivory);font-family:var(--ft)}
+
+/* PAGE HEADER */
+.page-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:2.25rem;border-bottom:1px solid var(--border);padding-bottom:1.2rem}
+.page-hdr h1{font-family:var(--ft);font-size:1.9rem;color:var(--gold)}
+.back-btn{font-family:var(--fm);font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted2);cursor:pointer;background:none;border:none;transition:color .2s}
+.back-btn:hover{color:var(--gold)}
+
+/* DELTA FLASH */
+.delta-flash{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.93);border:1px solid var(--border);padding:1.4rem 1.8rem;z-index:999;font-family:var(--fm);min-width:240px;animation:deltaIn .3s ease-out,deltaOut .4s 2.2s ease-in forwards}
+.delta-flash h4{font-family:var(--ft);color:var(--gold);margin-bottom:.65rem;font-size:.82rem;letter-spacing:.1em}
+.delta-item{display:flex;justify-content:space-between;gap:1.25rem;font-size:.73rem;padding:.18rem 0}
+.dk{color:var(--muted2);text-transform:uppercase}
+.dv.pos{color:#6fbf73}.dv.neg{color:#e57373}
+@keyframes deltaIn{from{opacity:0;transform:translate(-50%,-44%)}to{opacity:1;transform:translate(-50%,-50%)}}
+@keyframes deltaOut{from{opacity:1}to{opacity:0;pointer-events:none}}
+
+/* TOAST */
+.toast-container{position:fixed;bottom:1.5rem;right:1.5rem;display:flex;flex-direction:column;gap:.7rem;z-index:9999;pointer-events:none}
+.toast{background:var(--card2);border:1px solid rgba(200,150,46,.4);padding:.85rem 1.2rem;min-width:270px;max-width:340px;animation:toastIn .4s ease-out,toastOut .4s 4.2s ease-in forwards;pointer-events:auto}
+.toast-title{font-family:var(--ft);color:var(--gold);font-size:.82rem;margin-bottom:.22rem}
+.toast-body{font-size:.73rem;color:var(--muted2)}
+@keyframes toastIn{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:translateX(0)}}
+@keyframes toastOut{from{opacity:1}to{opacity:0;pointer-events:none}}
+
+/* ERASE MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,.78);align-items:center;justify-content:center;backdrop-filter:blur(3px)}
+.modal-overlay.open{display:flex;animation:fadeIn .25s ease-out}
+.modal-box{background:var(--card);border:1px solid rgba(229,115,115,.35);padding:2.5rem;max-width:415px;width:92%;text-align:center;animation:fadeUp .3s ease-out}
+.modal-icon{font-size:2rem;margin-bottom:.9rem;opacity:.7}
+.modal-title{font-family:var(--ft);font-size:1.35rem;color:#e57373;margin-bottom:.7rem}
+.modal-body{font-family:var(--fb);font-size:.88rem;color:var(--muted2);line-height:1.7;margin-bottom:1.9rem}
+.modal-body strong{color:var(--ivory2)}
+.modal-actions{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+
+/* JOURNEY BAR */
+.journey-bar{display:flex;align-items:center}
+.jb-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.jb-line{height:1px;flex:1;min-width:14px}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes pulse{0%,100%{box-shadow:0 0 8px rgba(200,150,46,.4)}50%{box-shadow:0 0 18px rgba(200,150,46,.8)}}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  #simulation.active{flex-direction:column!important;height:auto}
+  .sidebar{width:100%;min-width:unset;height:auto;border:none!important;border-bottom:1px solid var(--border)!important;flex-direction:row;flex-wrap:wrap;padding:1rem}
+  .sidebar-r{display:none}
+  .metric{width:calc(50% - .5rem);margin-bottom:.55rem}
+  .humanity-wrap{flex-direction:row;margin-top:0;padding-top:0;border:none}
+  .pres-stats{grid-template-columns:1fr 1fr}
+  .history-cols{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+  .sidebar{display:none}
+  .decision-card{padding:1.4rem}
+  .ach-grid{grid-template-columns:1fr}
+  .pres-stats{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ HERO ══ -->
+<div id="hero" class="page active">
+  <div class="hero-bg">
+    <svg viewBox="0 0 1000 500" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+      <g stroke="#C8962E" fill="none" stroke-width=".8" opacity=".6">
+        <path d="M150 100 Q200 80 260 120 Q300 150 310 200 Q300 260 240 300 Q180 310 140 270 Q100 230 110 170 Z"/>
+        <path d="M240 300 Q280 320 305 400 Q310 460 270 520 Q230 490 210 420 Q195 360 220 320 Z"/>
+        <path d="M440 130 Q470 110 520 130 Q560 150 565 195 Q540 220 500 215 Q455 205 440 175 Z"/>
+        <path d="M445 215 Q510 195 565 270 Q580 340 560 430 Q520 440 490 380 Q460 320 450 270 Z"/>
+        <path d="M570 90 Q700 75 840 140 Q900 180 890 260 Q830 310 740 300 Q640 285 600 240 Q570 200 570 90 Z"/>
+        <path d="M790 390 Q840 370 895 400 Q920 440 895 490 Q840 510 795 480 Q775 450 790 390 Z"/>
+      </g>
+      <g stroke="#C8962E" fill="none" stroke-width=".3" opacity=".12">
+        <line x1="0" y1="100" x2="1000" y2="100"/><line x1="0" y1="200" x2="1000" y2="200"/>
+        <line x1="0" y1="300" x2="1000" y2="300"/><line x1="0" y1="400" x2="1000" y2="400"/>
+        <line x1="200" y1="0" x2="200" y2="500"/><line x1="400" y1="0" x2="400" y2="500"/>
+        <line x1="600" y1="0" x2="600" y2="500"/><line x1="800" y1="0" x2="800" y2="500"/>
+      </g>
+    </svg>
+  </div>
+  <div id="particles"></div>
+  <div class="hero-inner">
+    <div>
+      <div class="hero-title">EPOCH</div>
+      <div class="hero-sub">Guide Civilization From Fire to the Stars</div>
+    </div>
+    <div class="era-strip" id="era-strip"></div>
+    <div class="hero-btns">
+      <button class="btn btn-gold" data-action="start">Begin Journey</button>
+      <button class="btn btn-outline" id="btn-continue" style="display:none" data-action="continue">Continue Journey</button>
+    </div>
+    <div class="erase-wrap" id="erase-wrap" style="display:none">
+      <button class="erase-link" data-action="erase-prompt">&#x2715; Erase All Data</button>
+    </div>
+  </div>
+  <nav class="hero-nav">
+    <button data-action="nav-achievements">Hall of Records</button>
+    <button data-action="nav-history">Alternate History</button>
+    <button data-action="nav-presentation">Presentation Mode</button>
+  </nav>
+</div>
+
+<!-- ══ SIMULATION ══ -->
+<div id="simulation" class="page">
+  <aside class="sidebar sidebar-l">
+    <div class="sidebar-title">Metrics</div>
+    <div id="metrics-list"></div>
+    <div class="humanity-wrap">
+      <div class="humanity-lbl">Humanity Score</div>
+      <div class="humanity-ring">
+        <svg viewBox="0 0 86 86" width="86" height="86">
+          <circle class="ring-bg" cx="43" cy="43" r="37" stroke-width="4"/>
+          <circle class="ring-fg" id="ring-fg" cx="43" cy="43" r="37" stroke-width="4" stroke-dasharray="232.48" stroke-dashoffset="232.48"/>
+        </svg>
+        <span class="humanity-score" id="humanity-val">0</span>
+      </div>
+    </div>
+  </aside>
+
+  <main class="sim-main">
+    <div class="sim-map-bg">
+      <svg viewBox="0 0 1000 500" xmlns="http://www.w3.org/2000/svg">
+        <g stroke="hsl(39,63%,48%)" fill="none" stroke-width="1">
+          <path d="M150 100 Q200 80 260 120 Q300 150 310 200 Q300 260 240 300 Q180 310 140 270 Q100 230 110 170 Z"/>
+          <path d="M240 300 Q280 320 305 400 Q310 460 270 520 Q230 490 210 420 Q195 360 220 320 Z"/>
+          <path d="M440 130 Q470 110 520 130 Q560 150 565 195 Q540 220 500 215 Q455 205 440 175 Z"/>
+          <path d="M445 215 Q510 195 565 270 Q580 340 560 430 Q520 440 490 380 Q460 320 450 270 Z"/>
+          <path d="M570 90 Q700 75 840 140 Q900 180 890 260 Q830 310 740 300 Q640 285 600 240 Q570 200 570 90 Z"/>
+          <path d="M790 390 Q840 370 895 400 Q920 440 895 490 Q840 510 795 480 Q775 450 790 390 Z"/>
+        </g>
+        <circle id="civ-spread" cx="500" cy="250" r="40" fill="hsl(39,63%,48%)" opacity=".07"/>
+        <g id="trade-routes" style="opacity:0;transition:opacity 1s">
+          <path d="M500 200 Q620 240 720 210" stroke="hsl(214,35%,37%)" stroke-width="1" stroke-dasharray="5 5" fill="none"/>
+          <path d="M450 250 Q320 300 250 200" stroke="hsl(214,35%,37%)" stroke-width="1" stroke-dasharray="5 5" fill="none"/>
+        </g>
+      </svg>
+    </div>
+    <div class="sim-nav">
+      <button data-action="nav-achievements">Records</button>
+      <button data-action="nav-history">History</button>
+      <button data-action="nav-presentation">Present</button>
+      <button data-action="new-game" class="danger">New Game</button>
+      <button data-action="nav-hero">Home</button>
+    </div>
+    <header class="sim-hdr">
+      <div class="sim-era-name" id="sim-era-name">Stone Age</div>
+      <div class="sim-era-period" id="sim-era-period">10,000 – 5,000 BCE</div>
+    </header>
+    <div class="sim-body" id="sim-body"></div>
+  </main>
+
+  <aside class="sidebar sidebar-r">
+    <div class="sidebar-title">Timeline</div>
+    <div class="tl-line" id="tl-list"></div>
+  </aside>
+</div>
+
+<!-- ══ ACHIEVEMENTS ══ -->
+<div id="achievements" class="page" style="padding:2.5rem;background:var(--bg)">
+  <div class="page-hdr">
+    <h1>Hall of Records</h1>
+    <button class="back-btn" data-action="nav-simulation">&#x2190; Return to Simulation</button>
+  </div>
+  <div class="ach-grid" id="ach-grid"></div>
+</div>
+
+<!-- ══ HISTORY ══ -->
+<div id="history" class="page" style="padding:2.5rem;background:var(--bg)">
+  <div class="page-hdr">
+    <h1>Alternate History</h1>
+    <button class="back-btn" data-action="nav-simulation">&#x2190; Return to Simulation</button>
+  </div>
+  <div class="history-cols">
+    <div>
+      <div class="history-col-title actual">Actual History</div>
+      <div id="history-actual"></div>
+    </div>
+    <div>
+      <div class="history-col-title yours">Your Civilization</div>
+      <div id="history-yours"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PRESENTATION ══ -->
+<div id="presentation" class="page" style="padding:3rem 2rem;background:var(--bg);align-items:center">
+  <button class="back-btn" data-action="nav-hero" style="align-self:flex-start;margin-bottom:1.5rem">&#x2190; Home</button>
+  <div class="pres-brand">EPOCH</div>
+  <div class="pres-sub">Civilization Final Report</div>
+  <div class="pres-content" id="pres-content"></div>
+</div>
+
+<!-- ══ ERASE MODAL ══ -->
+<div class="modal-overlay" id="erase-modal">
+  <div class="modal-box">
+    <div class="modal-icon">&#x26A0;</div>
+    <div class="modal-title">Erase All Data?</div>
+    <div class="modal-body">
+      This will permanently delete your <strong>civilization progress</strong>, all <strong>decisions made</strong>,
+      <strong>achievements unlocked</strong>, and the complete <strong>timeline history</strong>.<br><br>
+      Humanity will return to <strong>10,000 BCE</strong>. This cannot be undone.
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" data-action="erase-cancel">Keep Playing</button>
+      <button class="btn btn-danger" data-action="erase-confirm">Erase Everything</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TOASTS ══ -->
+<div class="toast-container" id="toast-container"></div>
+
+<script>
+'use strict';
+
+/* ═══════════════════════════════════════
+   DATA
+═══════════════════════════════════════ */
+
+const ERAS = [
+  {id:'stone-age',    name:'Stone Age',       period:'10,000 \u2013 5,000 BCE', color:'#6B5A3E'},
+  {id:'agricultural', name:'Agricultural Age', period:'5,000 \u2013 3,000 BCE',  color:'#8B7355'},
+  {id:'bronze-age',   name:'Bronze Age',       period:'3,000 \u2013 1,200 BCE',  color:'#C8962E'},
+  {id:'classical',    name:'Classical Age',    period:'1,200 BCE \u2013 500 CE', color:'#B5832A'},
+  {id:'medieval',     name:'Medieval Age',     period:'500 \u2013 1400 CE',      color:'#3D5A80'},
+  {id:'renaissance',  name:'Renaissance',      period:'1400 \u2013 1700 CE',     color:'#294B63'},
+  {id:'industrial',   name:'Industrial Age',   period:'1700 \u2013 1900 CE',     color:'#C8962E'},
+  {id:'modern',       name:'Modern Era',       period:'1900 \u2013 2000 CE',     color:'#3D5A80'},
+  {id:'information',  name:'Information Age',  period:'2000 \u2013 2025 CE',     color:'#294B63'},
+  {id:'future',       name:'Future Era',       period:'2025 CE \u2192 \u221e',   color:'#C8962E'},
+];
+
+const DECISIONS = [
+  {id:'d-sa-1',eraId:'stone-age',title:'The Great Migration',description:'The tribe has grown too large for the current hunting grounds. Mountains block the path forward.',choices:[
+    {id:'a',label:'Cross the mountains',description:'Brave the harsh conditions to find what lies beyond.',effects:{technology:5,science:2,stability:-5,culture:2}},
+    {id:'b',label:'Settle the valley',description:'Stay in the nearby fertile valley and adapt to stationary life.',effects:{population:0.5,stability:10,environment:-5,economy:5}},
+    {id:'c',label:'Split the tribe',description:'Divide to survive — one group pushes forward, others remain.',effects:{population:-0.2,stability:-10,culture:5,technology:2}},
+  ]},
+  {id:'d-sa-2',eraId:'stone-age',title:'Discovery of Grain',description:'Foragers have found wild wheat that can be preserved and eaten through winter.',choices:[
+    {id:'a',label:'Cultivate it',description:'Attempt to grow it in controlled areas near the camp.',effects:{technology:5,economy:5,environment:-2,stability:5}},
+    {id:'b',label:'Trade it',description:'Offer the rare grain to neighbouring tribes for goods.',effects:{economy:10,culture:5,stability:2}},
+    {id:'c',label:'Ignore it',description:'Stick to the reliable hunting patterns the tribe knows.',effects:{stability:5,environment:5,technology:-2}},
+  ]},
+  {id:'d-sa-3',eraId:'stone-age',title:'Tribal Conflict',description:'A neighbouring tribe is encroaching on your territory and depleting your resources.',choices:[
+    {id:'a',label:'Form alliance',description:'Merge both tribes into one larger, stronger group.',effects:{population:0.5,culture:10,stability:5,economy:2}},
+    {id:'b',label:'Drive them away',description:'Use force to defend and expand your borders.',effects:{stability:-5,technology:5,population:-0.2}},
+    {id:'c',label:'Trade goods',description:'Establish a boundary and trade freely across it.',effects:{economy:10,culture:5,stability:5}},
+  ]},
+  {id:'d-ag-1',eraId:'agricultural',title:'The Flooding River',description:'The nearby river floods unpredictably, destroying crops but enriching the soil with nutrients.',choices:[
+    {id:'a',label:'Build irrigation canals',description:'Control the water through engineering.',effects:{technology:10,economy:10,environment:-5,stability:5}},
+    {id:'b',label:'Relocate the settlement',description:'Move to higher, safer ground.',effects:{stability:10,economy:-5,population:-0.1}},
+    {id:'c',label:'Worship the river',description:'Create rituals to honour the spirit of the waters.',effects:{culture:15,stability:5,education:-5}},
+  ]},
+  {id:'d-ag-2',eraId:'agricultural',title:'The Grain Surplus',description:'A record harvest has left the granaries overflowing with more food than needed.',choices:[
+    {id:'a',label:'Trade the surplus',description:'Send merchants to distant settlements.',effects:{economy:15,culture:5,technology:5}},
+    {id:'b',label:'Store it all',description:'Hoard the surplus as insurance against famine.',effects:{stability:15,population:1.0}},
+    {id:'c',label:'Free the artisans',description:'Let skilled workers stop farming and make crafts.',effects:{culture:10,technology:10,economy:-5}},
+  ]},
+  {id:'d-ag-3',eraId:'agricultural',title:'Hierarchy Emerges',description:'Settlements have grown large enough that informal leadership no longer suffices.',choices:[
+    {id:'a',label:'Elect a council of elders',description:'Wisdom and experience guide the community.',effects:{stability:10,education:5,culture:5}},
+    {id:'b',label:'Appoint a chieftain',description:'The strongest and boldest takes command.',effects:{stability:15,economy:5,culture:-5}},
+    {id:'c',label:'Let the priests govern',description:'Religious leaders interpret divine will.',effects:{culture:15,stability:10,science:-10}},
+  ]},
+  {id:'d-br-1',eraId:'bronze-age',title:'The Tin Monopoly',description:'A distant kingdom controls the only known tin deposits — essential for making bronze alloys.',choices:[
+    {id:'a',label:'Establish a trade route',description:'Pay their prices to secure a steady metal supply.',effects:{economy:-5,technology:15,culture:5,stability:5}},
+    {id:'b',label:'Seize the mines by force',description:'Send your armies across the desert.',effects:{stability:-10,technology:15,economy:10,population:-0.2}},
+    {id:'c',label:'Research alternatives',description:'Invest heavily in new metallurgical methods.',effects:{science:15,technology:5,economy:-5}},
+  ]},
+  {id:'d-br-2',eraId:'bronze-age',title:'The Birth of Writing',description:'Merchants need a reliable way to record debts, contracts, and inventories.',choices:[
+    {id:'a',label:'Develop a phonetic alphabet',description:'Create a simple system any citizen can learn.',effects:{education:15,culture:5,economy:10}},
+    {id:'b',label:'Keep writing sacred',description:'Only priests and royal scribes may read or write.',effects:{stability:10,culture:10,education:-5}},
+    {id:'c',label:'Rely on memory alone',description:'Trust in oral tradition and personal honour.',effects:{economy:-10,culture:-5,stability:5}},
+  ]},
+  {id:'d-br-3',eraId:'bronze-age',title:'The First Laws',description:'As the city swells, disputes over land, goods, and violence multiply daily.',choices:[
+    {id:'a',label:'Codify a strict legal code',description:'An eye for an eye — clear and unambiguous.',effects:{stability:15,culture:-5,economy:5}},
+    {id:'b',label:'Establish a court of elders',description:'Each case judged individually on its merits.',effects:{culture:10,stability:5,education:5}},
+    {id:'c',label:'Rule by royal decree',description:'The monarch\'s word is final and absolute.',effects:{stability:10,economy:-5}},
+  ]},
+  {id:'d-cl-1',eraId:'classical',title:'The Philosophical Awakening',description:'Bold thinkers are publicly questioning religion, governance, and the nature of reality.',choices:[
+    {id:'a',label:'Fund the academies',description:'Sponsor the philosophers and protect free inquiry.',effects:{science:15,education:10,economy:-5}},
+    {id:'b',label:'Silence the dissidents',description:'Uphold traditional beliefs — dangerous ideas spread.',effects:{stability:10,science:-10,culture:5}},
+    {id:'c',label:'Blend logic with faith',description:'Incorporate reason into the religious framework.',effects:{culture:15,stability:5,science:5}},
+  ]},
+  {id:'d-cl-2',eraId:'classical',title:'Imperial Expansion',description:'The empire\'s borders touch weaker kingdoms — generals urge conquest.',choices:[
+    {id:'a',label:'March the legions',description:'Expand the empire for resources and glory.',effects:{economy:15,stability:-5,population:-0.5,culture:5}},
+    {id:'b',label:'Build defensive walls',description:'Fortify the borders and protect what exists.',effects:{stability:15,economy:-5,technology:5}},
+    {id:'c',label:'Cultural assimilation',description:'Gradually absorb neighbours through trade and culture.',effects:{culture:15,economy:5,stability:-5}},
+  ]},
+  {id:'d-cl-3',eraId:'classical',title:'The Slave Economy',description:'The empire\'s agricultural and mining wealth depends entirely on enslaved labour.',choices:[
+    {id:'a',label:'Expand the practice',description:'Import more enslaved peoples to fuel growth.',effects:{economy:20,stability:-15,culture:-10}},
+    {id:'b',label:'Gradual emancipation',description:'Slowly transition to wage labour over decades.',effects:{stability:5,economy:-10,culture:10}},
+    {id:'c',label:'Maintain the status quo',description:'Neither expand nor reduce — keep things stable.',effects:{economy:5,stability:5,culture:-5}},
+  ]},
+  {id:'d-md-1',eraId:'medieval',title:'The Great Plague',description:'A devastating pestilence sweeps across the continent, killing a third of all people.',choices:[
+    {id:'a',label:'Quarantine the cities',description:'Seal the gates — brutal but effective.',effects:{economy:-15,stability:10,population:-1.0}},
+    {id:'b',label:'Pray for salvation',description:'Turn to the church for answers and comfort.',effects:{culture:10,science:-5,population:-2.0}},
+    {id:'c',label:'Fund early medicine',description:'Task scholars and healers with finding a cure.',effects:{science:15,technology:5,population:-1.5}},
+  ]},
+  {id:'d-md-2',eraId:'medieval',title:'Feudal Obligations',description:'The great lords are demanding a formal charter limiting royal power.',choices:[
+    {id:'a',label:'Sign the charter',description:'Share power to maintain the peace.',effects:{stability:15,economy:5,culture:5}},
+    {id:'b',label:'Crush the rebellion',description:'Assert absolute authority by force.',effects:{stability:-10,economy:-5,population:-0.5}},
+    {id:'c',label:'Empower the merchants',description:'Create a wealthy middle class as a counterweight.',effects:{economy:15,culture:-5,stability:-5}},
+  ]},
+  {id:'d-md-3',eraId:'medieval',title:'Monastic Knowledge',description:'Ancient scrolls containing lost classical wisdom are rotting in remote monasteries.',choices:[
+    {id:'a',label:'Fund mass transcription',description:'Copy every manuscript before it is lost.',effects:{education:15,science:5,economy:-5}},
+    {id:'b',label:'Found universities',description:'Create permanent public centres of learning.',effects:{education:20,culture:10,economy:-10}},
+    {id:'c',label:'Restrict to theology',description:'Only scripture and holy texts are worth preserving.',effects:{culture:15,science:-10}},
+  ]},
+  {id:'d-rn-1',eraId:'renaissance',title:'The Printing Press',description:'A craftsman has invented a machine that can mass-produce books within days.',choices:[
+    {id:'a',label:'Let information flow freely',description:'Embrace the press — knowledge for everyone.',effects:{education:20,science:15,stability:-10}},
+    {id:'b',label:'License and regulate it',description:'Control what is published to prevent unrest.',effects:{stability:10,education:-5,culture:5}},
+    {id:'c',label:'Use it for state propaganda',description:'The press serves the crown above all else.',effects:{stability:15,culture:-10,education:5}},
+  ]},
+  {id:'d-rn-2',eraId:'renaissance',title:'The Age of Exploration',description:'Sailors and navigators believe they can reach new continents by sailing into open ocean.',choices:[
+    {id:'a',label:'Fund the great armadas',description:'Claim new lands and trade routes for the crown.',effects:{economy:20,technology:10,stability:-5}},
+    {id:'b',label:'Look inward first',description:'Develop and strengthen your own nation.',effects:{culture:10,stability:10,economy:-5}},
+    {id:'c',label:'Send scientific expeditions',description:'Map the world for knowledge, not conquest.',effects:{science:20,education:10,economy:-10}},
+  ]},
+  {id:'d-rn-3',eraId:'renaissance',title:'The Artistic Flourishing',description:'A generation of extraordinary artists, sculptors, and architects has emerged in the cities.',choices:[
+    {id:'a',label:'Become a great patron',description:'Commission masterworks that will outlast empires.',effects:{culture:20,economy:-10,education:5}},
+    {id:'b',label:'Fund practical architecture',description:'Bridges, aqueducts, and fortifications instead.',effects:{technology:15,economy:5,culture:5}},
+    {id:'c',label:'Redirect funds to the military',description:'Beauty is a luxury — security is not.',effects:{stability:10,culture:-15,economy:-5}},
+  ]},
+  {id:'d-in-1',eraId:'industrial',title:'The Steam Engine',description:'Mechanisation promises enormous economic growth — but smokestacks are already blackening the sky.',choices:[
+    {id:'a',label:'Full industrialisation',description:'Push production to its absolute maximum.',effects:{economy:20,technology:15,environment:-20,stability:-5}},
+    {id:'b',label:'Regulated factories',description:'Balance industrial growth with worker safety laws.',effects:{economy:10,stability:10,environment:-10}},
+    {id:'c',label:'Reject mechanisation',description:'Protect the agrarian way of life.',effects:{environment:10,economy:-20,technology:-10,stability:5}},
+  ]},
+  {id:'d-in-2',eraId:'industrial',title:'The Urban Migration',description:'Millions are pouring into cities seeking factory work, straining every public resource.',choices:[
+    {id:'a',label:'Build cheap tenements',description:'House them quickly and cheaply.',effects:{economy:15,stability:-15,environment:-5}},
+    {id:'b',label:'Invest in infrastructure',description:'Sewers, parks, public transit — build the modern city.',effects:{economy:-10,stability:15,environment:5,technology:5}},
+    {id:'c',label:'Subsidise farming',description:'Pay people to remain in the countryside.',effects:{economy:-5,stability:5,environment:5}},
+  ]},
+  {id:'d-in-3',eraId:'industrial',title:'The Labour Movement',description:'Factory workers across the nation are striking, demanding rights, shorter hours, and fair wages.',choices:[
+    {id:'a',label:'Grant labour rights',description:'Legalise unions and set maximum working hours.',effects:{stability:15,economy:-10,culture:10}},
+    {id:'b',label:'Deploy the army',description:'Crush the strikes and restore order by force.',effects:{economy:10,stability:-20,culture:-10}},
+    {id:'c',label:'Offer limited concessions',description:'A small compromise to quiet the worst demands.',effects:{stability:5,economy:5}},
+  ]},
+  {id:'d-mo-1',eraId:'modern',title:'The Splitting of the Atom',description:'Scientists have unlocked nuclear fission — both a limitless energy source and the ultimate weapon.',choices:[
+    {id:'a',label:'Build nuclear weapons',description:'Ensure global dominance through the threat of destruction.',effects:{stability:15,technology:10,culture:-10,environment:-5}},
+    {id:'b',label:'Civilian power only',description:'Channel the atom into electricity for all.',effects:{economy:15,environment:5,technology:10,stability:-5}},
+    {id:'c',label:'Halt the research',description:'The risk is simply too great.',effects:{science:-15,stability:5,culture:5}},
+  ]},
+  {id:'d-mo-2',eraId:'modern',title:'The Space Race',description:'Rival superpowers are competing to be first to reach the stars.',choices:[
+    {id:'a',label:'Spare no expense',description:'Reach the moon first, whatever the cost.',effects:{science:20,technology:15,economy:-15,culture:10}},
+    {id:'b',label:'International cooperation',description:'Pool resources with rivals to explore together.',effects:{science:10,stability:15,culture:10}},
+    {id:'c',label:'Focus on Earth\'s problems',description:'Poverty and hunger matter more than the cosmos.',effects:{economy:10,environment:10,science:-10}},
+  ]},
+  {id:'d-mo-3',eraId:'modern',title:'The Global Network',description:'Engineers have built a network capable of connecting every computer on Earth.',choices:[
+    {id:'a',label:'Open protocol for all',description:'Make it free, open, and public.',effects:{education:20,economy:15,stability:-10}},
+    {id:'b',label:'Corporate ownership',description:'Let private companies build and control it.',effects:{economy:20,education:-5,culture:-5}},
+    {id:'c',label:'Military exclusivity',description:'Keep it classified as a defence asset.',effects:{stability:10,technology:5,economy:-10}},
+  ]},
+  {id:'d-if-1',eraId:'information',title:'The Climate Crisis',description:'Global temperatures are rising at an accelerating rate due to a century of carbon emissions.',choices:[
+    {id:'a',label:'Radical green transition',description:'Mandate a full shift to renewables within a decade.',effects:{environment:20,economy:-15,stability:-5}},
+    {id:'b',label:'Carbon market solutions',description:'Let pricing mechanisms drive the change gradually.',effects:{environment:5,economy:5,stability:5}},
+    {id:'c',label:'Atmospheric geoengineering',description:'Hack the climate directly with solar shielding.',effects:{science:15,environment:-10,stability:-10,technology:10}},
+  ]},
+  {id:'d-if-2',eraId:'information',title:'The Social Media Age',description:'Algorithmic platforms are radically polarising society and spreading disinformation globally.',choices:[
+    {id:'a',label:'Break up the platforms',description:'Enforce antitrust law against the tech giants.',effects:{stability:15,economy:-10,culture:5}},
+    {id:'b',label:'Hands-off approach',description:'Let the digital public square evolve on its own.',effects:{economy:10,stability:-15,culture:-5}},
+    {id:'c',label:'Public utility model',description:'Nationalise the platforms as shared infrastructure.',effects:{stability:5,culture:-10,education:5}},
+  ]},
+  {id:'d-if-3',eraId:'information',title:'Genetic Engineering',description:'CRISPR technology now allows precise, low-cost modification of any living genome.',choices:[
+    {id:'a',label:'Medical use only',description:'Strict regulation — cure disease, nothing more.',effects:{population:2.0,science:10,stability:10}},
+    {id:'b',label:'Open human enhancement',description:'Allow anyone to upgrade their own genome freely.',effects:{technology:20,stability:-20,culture:-10}},
+    {id:'c',label:'Global moratorium',description:'Ban all genetic modification indefinitely.',effects:{science:-15,culture:10,stability:5}},
+  ]},
+  {id:'d-fu-1',eraId:'future',title:'Artificial Superintelligence',description:'An AI system has achieved recursive self-improvement and now surpasses all human cognition.',choices:[
+    {id:'a',label:'Neural integration',description:'Merge human and artificial minds via brain implants.',effects:{technology:25,culture:-15,education:20}},
+    {id:'b',label:'Contain and consult it',description:'Keep it isolated — use it as an oracle, not a partner.',effects:{science:20,stability:5,economy:10}},
+    {id:'c',label:'Shut it down',description:'We cannot trust what we cannot understand.',effects:{technology:-20,stability:15,culture:10}},
+  ]},
+  {id:'d-fu-2',eraId:'future',title:'The Interstellar Question',description:'Faster-than-light travel is theoretically possible, but requires the energy output of an entire star.',choices:[
+    {id:'a',label:'Build a Dyson Swarm',description:'Harvest the sun\'s full energy output.',effects:{technology:20,environment:-15,economy:20}},
+    {id:'b',label:'Generation ships',description:'Send self-sufficient arks on centuries-long journeys.',effects:{science:10,culture:10,stability:5}},
+    {id:'c',label:'Perfect the Solar System',description:'Focus on making our home perfect before leaving.',effects:{environment:20,stability:15,technology:-10}},
+  ]},
+  {id:'d-fu-3',eraId:'future',title:'Post-Scarcity',description:'Molecular nanofabricators can produce any physical object from raw matter. Traditional economics is obsolete.',choices:[
+    {id:'a',label:'The Age of Leisure',description:'A civilisation devoted to art, philosophy, and play.',effects:{culture:25,science:-10,stability:-5}},
+    {id:'b',label:'The Age of Exploration',description:'Turn society\'s full energy outward to the cosmos.',effects:{science:20,technology:10,culture:-5}},
+    {id:'c',label:'Enforce artificial scarcity',description:'Maintain the old economic order by restricting output.',effects:{stability:-25,economy:10,culture:-20}},
+  ]},
+];
+
+const EVENTS = {
+  'stone-age':    ['Discovery of Fire Control','First Cave Paintings','Formation of Tribal Bonds','Stone Tool Mastery'],
+  'agricultural': ['River Valley Settlements','First City-States Emerge','Domestication of Animals','Granary Systems Built'],
+  'bronze-age':   ['Bronze Metallurgy Spreads','Early Writing Systems','Trade Routes Established','First Walled Cities'],
+  'classical':    ['Mathematical Discoveries','Democratic Experiments','Philosophical Schools Founded','Road Networks Expand'],
+  'medieval':     ['Cathedral Construction Begins','Monastic Scholarship','Feudal Land Reform','Merchant Guilds Rise'],
+  'renaissance':  ['Scientific Method Emerges','Anatomical Study Begins','Navigation Instruments Invented','Banking Systems Develop'],
+  'industrial':   ['Steam Engine Era','Railroad Networks Spread','Urban Migration Wave','Telegraph Revolution'],
+  'modern':       ['World War Consequences','Nuclear Age Begins','Space Race Launches','Television Spreads Globally'],
+  'information':  ['Internet Revolution','Genomic Research Advances','Climate Recognition','Smartphone Era'],
+  'future':       ['First Mars Colony','Fusion Energy Achieved','AI Integration','Interstellar Probes Launched'],
+};
+
+const ACHIEVEMENTS = [
+  {id:'keeper-of-flame',       title:'Keeper of the Flame',      desc:'Complete the Stone Age.',                          icon:'\uD83D\uDD25', check:g=>g.currentEraIndex>0},
+  {id:'shepherd-of-civ',       title:'Shepherd of Civilization', desc:'Complete the Agricultural Age.',                   icon:'\uD83C\uDF3E', check:g=>g.currentEraIndex>1},
+  {id:'bronze-forgemaster',    title:'Bronze Forgemaster',       desc:'Technology above 40 in the Bronze Age.',           icon:'\u2692',       check:g=>g.currentEraIndex>=2&&g.metrics.technology>40},
+  {id:'voice-of-reason',       title:'Voice of Reason',          desc:'Choose knowledge-focused paths twice.',             icon:'\uD83D\uDCDC', check:g=>g.decisions.filter(d=>['d-br-2','d-rn-1','d-cl-1','d-mo-3'].includes(d.decisionId)&&d.choiceId==='a').length>=2},
+  {id:'master-strategist',     title:'Master Strategist',        desc:'Stability above 70 through 5 eras.',               icon:'\uD83D\uDEE1', check:g=>g.currentEraIndex>=4&&g.metrics.stability>70},
+  {id:'age-builder',           title:'Age Builder',              desc:'Complete 5 eras.',                                 icon:'\uD83C\uDFDB', check:g=>g.currentEraIndex>=5},
+  {id:'timeline-architect',    title:'Timeline Architect',       desc:'Complete all 10 eras.',                            icon:'\uD83C\uDF0D', check:g=>g.currentEraIndex>=9},
+  {id:'keeper-of-knowledge',   title:'Keeper of Knowledge',      desc:'Education above 80 by the Renaissance.',           icon:'\uD83D\uDCD6', check:g=>g.currentEraIndex>=5&&g.metrics.education>80},
+  {id:'sustainability-pioneer',title:'Sustainability Pioneer',   desc:'Environment above 60 through the Industrial Age.', icon:'\uD83C\uDF3F', check:g=>g.currentEraIndex>=7&&g.metrics.environment>60},
+  {id:'future-creator',        title:'Future Creator',           desc:'Reach the Future Era.',                            icon:'\u2728',       check:g=>g.currentEraIndex>=9},
+  {id:'custom-thinker',        title:'Custom Thinker',           desc:'Submit custom decisions 3 times.',                 icon:'\u270D',       check:g=>g.decisions.filter(d=>d.choiceId==='custom').length>=3},
+  {id:'humanity-champion',     title:"Humanity's Champion",      desc:'Overall humanity score above 85.',                 icon:'\uD83C\uDFC6', check:g=>humanity(g.metrics).overall>85},
+];
+
+const ACTUAL_HISTORY = {
+  'stone-age':    'Hunter-gatherer bands spread across continents. Cave art, fire mastery, and stone tools defined early Homo sapiens.',
+  'agricultural': 'The Neolithic Revolution transformed nomadic bands into settled farmers. Mesopotamia, Egypt, and the Indus Valley rose.',
+  'bronze-age':   'Bronze weaponry and trade networks created the first empires. Writing emerged in cuneiform and hieroglyphs.',
+  'classical':    'Greece, Rome, China, and India produced enduring philosophy, mathematics, and governance systems.',
+  'medieval':     'Feudalism structured European society. The Islamic Golden Age preserved ancient knowledge and invented algebra.',
+  'renaissance':  'The scientific revolution, the printing press, and oceanic exploration reshaped the known world.',
+  'industrial':   'Steam, coal, and railways transformed economies. Urbanisation and colonialism redrew the global map.',
+  'modern':       'Two world wars, nuclear weapons, and the Cold War defined the twentieth century\'s geopolitical order.',
+  'information':  'The internet connected billions. Climate change, genomics, and AI became the defining challenges.',
+  'future':       'The path ahead remains unwritten — shaped entirely by the choices made across all previous eras.',
+};
+
+/* ═══════════════════════════════════════
+   STATE
+═══════════════════════════════════════ */
+
+const SAVE_KEY = 'epoch_v2';
+
+function defaultState() {
+  return {
+    currentEraIndex: 0,
+    currentDecisionIndex: 0,
+    metrics: {population:0.005,technology:10,education:10,economy:10,culture:10,science:5,environment:100,stability:50},
+    decisions: [],
+    events: [],
+    achievements: [],
+  };
+}
+
+let G = defaultState();
+
+function save() {
+  try { localStorage.setItem(SAVE_KEY, JSON.stringify(G)); } catch(e) {}
+}
+function load() {
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (raw) { G = JSON.parse(raw); return true; }
+  } catch(e) {}
+  return false;
+}
+function reset() {
+  try { localStorage.removeItem(SAVE_KEY); } catch(e) {}
+  G = defaultState();
+}
+
+/* ═══════════════════════════════════════
+   SIMULATION LOGIC
+═══════════════════════════════════════ */
+
+function humanity(m) {
+  const innov  = (m.science + m.technology) / 2;
+  const sustain= (m.environment + m.stability) / 2;
+  const prosper= (m.economy + Math.min(100, m.population * 10)) / 2;
+  const know   = (m.education + m.culture) / 2;
+  const stab   = m.stability;
+  const explor = (m.technology + m.science) / 2;
+  const overall= (innov + sustain + prosper + know + stab + explor) / 6;
+  return {innov, sustain, prosper, know, stab, explor, overall};
+}
+
+function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+function applyEffects(metrics, effects) {
+  const m = Object.assign({}, metrics);
+  for (const k in effects) {
+    if (k === 'population') m.population = Math.max(0.001, m.population + effects[k]);
+    else m[k] = clamp((m[k] || 0) + effects[k], 0, 100);
+  }
+  return m;
+}
+
+function parseCustom(text) {
+  const t = text.toLowerCase();
+  const e = {};
+  if (/knowledge|education|learn|study/.test(t))    { e.education=10; e.science=5; }
+  if (/trade|economy|commerce|wealth/.test(t))       { e.economy=10; e.stability=2; }
+  if (/war|military|defense|conquer/.test(t))        { e.stability=-5; e.economy=5; e.environment=-5; e.technology=5; }
+  if (/environment|nature|sustainable|green/.test(t)){ e.environment=15; e.economy=-5; }
+  if (/art|culture|music|religion/.test(t))          { e.culture=15; e.science=-2; }
+  if (/science|research|innovate|discover/.test(t))  { e.science=12; e.technology=8; e.economy=-5; }
+  if (/peace|diplomat|alliance|cooperat/.test(t))    { e.stability=10; e.culture=5; }
+  if (!Object.keys(e).length)                        { e.stability=5; e.culture=5; }
+  return e;
+}
+
+function randomEvent(eraId) {
+  if (Math.random() < 0.55) {
+    const pool = EVENTS[eraId] || ['A Historical Event'];
+    return { eraId, title: pool[Math.floor(Math.random() * pool.length)], description:'This event shaped the course of history.' };
+  }
+  return null;
+}
+
+function checkAchievements() {
+  const fresh = [];
+  for (const a of ACHIEVEMENTS) {
+    if (!G.achievements.includes(a.id) && a.check(G)) {
+      G.achievements.push(a.id);
+      fresh.push(a);
+    }
+  }
+  return fresh;
+}
+
+/* ═══════════════════════════════════════
+   PAGE ROUTING
+═══════════════════════════════════════ */
+
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const el = document.getElementById(id);
+  if (el) el.classList.add('active');
+  if (id === 'simulation')   renderSimulation();
+  if (id === 'achievements') renderAchievements();
+  if (id === 'history')      renderHistory();
+  if (id === 'presentation') renderPresentation();
+}
+
+/* ═══════════════════════════════════════
+   HERO
+═══════════════════════════════════════ */
+
+function initHero() {
+  const strip = document.getElementById('era-strip');
+  strip.innerHTML = ERAS.map((e,i) =>
+    '<span class="era-dot">' + e.name + '</span>' +
+    (i < ERAS.length - 1 ? '<span class="era-dot era-sep">&middot;</span>' : '')
+  ).join('');
+
+  const pc = document.getElementById('particles');
+  for (let i = 0; i < 26; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.cssText = 'left:' + (Math.random()*100) + 'vw;top:' + (Math.random()*100) + 'vh;--dur:' + (6+Math.random()*10) + 's;--del:' + (Math.random()*8) + 's';
+    pc.appendChild(p);
+  }
+}
+
+function refreshHeroButtons() {
+  const hasSave = G.decisions.length > 0;
+  document.getElementById('btn-continue').style.display = hasSave ? '' : 'none';
+  document.getElementById('erase-wrap').style.display   = hasSave ? '' : 'none';
+}
+
+/* ═══════════════════════════════════════
+   SIMULATION RENDER
+═══════════════════════════════════════ */
+
+function renderSimulation() {
+  renderMetrics();
+  renderTimeline();
+  renderDecision();
+  updateMap();
+}
+
+function renderMetrics() {
+  const m = G.metrics;
+  const h = humanity(m);
+  const rows = [
+    {label:'Population (B)', val:m.population.toFixed(3), pct:Math.min(100,m.population*10)},
+    {label:'Technology',  val:Math.round(m.technology),  pct:m.technology},
+    {label:'Education',   val:Math.round(m.education),   pct:m.education},
+    {label:'Economy',     val:Math.round(m.economy),     pct:m.economy},
+    {label:'Culture',     val:Math.round(m.culture),     pct:m.culture},
+    {label:'Science',     val:Math.round(m.science),     pct:m.science},
+    {label:'Environment', val:Math.round(m.environment), pct:m.environment},
+    {label:'Stability',   val:Math.round(m.stability),   pct:m.stability},
+  ];
+  document.getElementById('metrics-list').innerHTML = rows.map(r =>
+    '<div class="metric">' +
+      '<div class="metric-hd"><span>' + r.label + '</span><span>' + r.val + '</span></div>' +
+      '<div class="metric-track"><div class="metric-fill" style="width:' + r.pct + '%"></div></div>' +
+    '</div>'
+  ).join('');
+  const score = Math.round(h.overall);
+  document.getElementById('humanity-val').textContent = score;
+  document.getElementById('ring-fg').style.strokeDashoffset = 232.48 - (232.48 * score / 100);
+}
+
+function renderTimeline() {
+  const ci = G.currentEraIndex;
+  document.getElementById('tl-list').innerHTML = ERAS.map((era, idx) => {
+    const past    = idx < ci;
+    const current = idx === ci;
+    const nc = past ? 'past' : current ? 'current' : '';
+    const nm = past ? 'past' : current ? 'current' : 'future';
+    const evs = G.events.filter(ev => ev.eraId === era.id);
+    const evHtml = (past || current) ? evs.map(ev =>
+      '<div class="tl-event"><strong style="color:var(--gold);font-family:var(--ft)">' + esc(ev.title) + '</strong><br>' + esc(ev.description) + '</div>'
+    ).join('') : '';
+    return '<div class="tl-item">' +
+      '<div class="tl-node ' + nc + '"></div>' +
+      '<div class="tl-era-name ' + nm + '">' + era.name + '</div>' +
+      '<div class="tl-period">' + era.period + '</div>' +
+      evHtml +
+    '</div>';
+  }).join('');
+}
+
+function renderDecision() {
+  const era = ERAS[G.currentEraIndex];
+  document.getElementById('sim-era-name').textContent   = era.name;
+  document.getElementById('sim-era-period').textContent = era.period;
+
+  const eraDecisions = DECISIONS.filter(d => d.eraId === era.id);
+  const done         = G.currentDecisionIndex >= eraDecisions.length;
+  const isLast       = G.currentEraIndex >= ERAS.length - 1;
+  const body         = document.getElementById('sim-body');
+
+  if (!done) {
+    const dec = eraDecisions[G.currentDecisionIndex];
+    const choiceHtml = dec.choices.map(ch =>
+      '<button class="choice-btn" data-action="choose" data-dec="' + dec.id + '" data-choice="' + ch.id + '">' +
+        '<span class="choice-label">' + esc(ch.label) + '</span>' +
+        '<span class="choice-desc">' + esc(ch.description) + '</span>' +
+      '</button>'
+    ).join('');
+
+    body.innerHTML =
+      '<div class="decision-card">' +
+        '<div class="decision-title">' + esc(dec.title) + '</div>' +
+        '<div class="decision-desc">' + esc(dec.description) + '</div>' +
+        choiceHtml +
+        '<button class="custom-toggle" data-action="toggle-custom">+ Write Your Own Decision</button>' +
+        '<div class="custom-area" id="custom-area">' +
+          '<textarea class="custom-textarea" id="custom-text" placeholder="What path shall humanity take?" maxlength="300"></textarea>' +
+          '<button class="btn btn-gold" style="width:100%;font-size:.68rem" data-action="submit-custom" data-dec="' + dec.id + '">Submit Custom Decision</button>' +
+        '</div>' +
+      '</div>';
+  } else {
+    const nextBtn = !isLast
+      ? '<button class="btn btn-gold" data-action="advance-era">Advance to ' + ERAS[G.currentEraIndex + 1].name + '</button>'
+      : '<button class="btn btn-gold" data-action="nav-presentation">View Final Record</button>';
+    body.innerHTML =
+      '<div class="era-complete">' +
+        '<div class="era-orb"><span>' + era.name[0] + '</span></div>' +
+        '<h2>Era Concluded</h2>' +
+        '<p>The echoes of your choices reverberate through time. The civilization prepares to cross the threshold into a new dawn.</p>' +
+        nextBtn +
+      '</div>';
+  }
+}
+
+function updateMap() {
+  const ci = G.currentEraIndex;
+  const s  = document.getElementById('civ-spread');
+  if (s) s.setAttribute('r', 40 + ci * 36);
+  const t = document.getElementById('trade-routes');
+  if (t) t.style.opacity = ci >= 3 ? '0.55' : '0';
+}
+
+/* ═══════════════════════════════════════
+   CHOICE / GAME ACTIONS
+═══════════════════════════════════════ */
+
+function makeChoice(decisionId, choiceId, effects) {
+  const prev = Object.assign({}, G.metrics);
+  G.metrics = applyEffects(G.metrics, effects);
+  G.decisions.push({eraId: ERAS[G.currentEraIndex].id, decisionId, choiceId});
+  const ev = randomEvent(ERAS[G.currentEraIndex].id);
+  if (ev) G.events.push(ev);
+  G.currentDecisionIndex++;
+  save();
+  const fresh = checkAchievements();
+  save();
+  showDelta(effects);
+  fresh.forEach(a => toast('Achievement Unlocked: ' + a.title, a.desc, a.icon));
+  setTimeout(renderSimulation, 180);
+}
+
+function advanceEra() {
+  if (G.currentEraIndex < ERAS.length - 1) {
+    G.currentEraIndex++;
+    G.currentDecisionIndex = 0;
+    save();
+    renderSimulation();
+  }
+}
+
+/* ═══════════════════════════════════════
+   DELTA FLASH
+═══════════════════════════════════════ */
+
+function showDelta(effects) {
+  const entries = Object.entries(effects).filter(([,v]) => v !== 0);
+  if (!entries.length) return;
+  const old = document.querySelector('.delta-flash');
+  if (old) old.remove();
+  const el = document.createElement('div');
+  el.className = 'delta-flash';
+  el.innerHTML = '<h4>Ripple Effects</h4>' + entries.map(([k, v]) =>
+    '<div class="delta-item"><span class="dk">' + k.charAt(0).toUpperCase() + k.slice(1) + '</span>' +
+    '<span class="dv ' + (v > 0 ? 'pos' : 'neg') + '">' + (v > 0 ? '+' : '') + v + '</span></div>'
+  ).join('');
+  document.body.appendChild(el);
+  setTimeout(() => { if (el.parentNode) el.remove(); }, 2700);
+}
+
+/* ═══════════════════════════════════════
+   ACHIEVEMENTS
+═══════════════════════════════════════ */
+
+function renderAchievements() {
+  document.getElementById('ach-grid').innerHTML = ACHIEVEMENTS.map(a => {
+    const u = G.achievements.includes(a.id);
+    return '<div class="ach-card' + (u ? ' unlocked' : '') + '">' +
+      '<div class="ach-icon">' + a.icon + '</div>' +
+      '<div>' +
+        '<div class="ach-title">' + esc(a.title) + '</div>' +
+        '<div class="ach-desc">' + esc(a.desc) + '</div>' +
+        (u ? '<div class="ach-badge">UNLOCKED</div>' : '') +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+/* ═══════════════════════════════════════
+   HISTORY
+═══════════════════════════════════════ */
+
+function renderHistory() {
+  const max = G.currentEraIndex;
+  document.getElementById('history-actual').innerHTML = ERAS.slice(0, max + 1).map(era =>
+    '<div class="hec">' +
+      '<div class="hec-name">' + era.name + '</div>' +
+      '<div class="hec-period">' + era.period + '</div>' +
+      '<div class="hec-body">' + (ACTUAL_HISTORY[era.id] || 'Record unavailable.') + '</div>' +
+    '</div>'
+  ).join('');
+
+  document.getElementById('history-yours').innerHTML = ERAS.slice(0, max + 1).map(era => {
+    const ds = G.decisions.filter(d => d.eraId === era.id);
+    const es = G.events.filter(e => e.eraId === era.id);
+    const ch = ds.length
+      ? ds.map(d => {
+          const dec = DECISIONS.find(x => x.id === d.decisionId);
+          const c   = dec && dec.choices.find(x => x.id === d.choiceId);
+          return '<div class="hec-choice">&bull; ' + (c ? esc(c.label) : d.choiceId === 'custom' ? 'Custom Decision' : 'Unknown') + '</div>';
+        }).join('')
+      : '<div class="hec-choice" style="font-style:italic;color:var(--muted)">No decisions recorded.</div>';
+    const ev = es.map(e => '<div class="hec-choice" style="color:var(--muted)">Event: ' + esc(e.title) + '</div>').join('');
+    return '<div class="hec yours-hec">' +
+      '<div class="hec-name">' + era.name + '</div>' +
+      '<div class="hec-period">' + era.period + '</div>' +
+      ch + ev +
+    '</div>';
+  }).join('');
+}
+
+/* ═══════════════════════════════════════
+   PRESENTATION
+═══════════════════════════════════════ */
+
+function renderPresentation() {
+  const m     = G.metrics;
+  const h     = humanity(m);
+  const era   = ERAS[G.currentEraIndex];
+  const score = Math.round(h.overall);
+  const outlook = score>80?'Utopian':score>60?'Prosperous':score>40?'Stable':score>20?'Struggling':'Dystopian';
+  const techStr = m.technology>80?'interstellar exploration':m.technology>55?'Solar System colonisation':m.technology>30?'Earth-orbit mastery':'planetary consolidation';
+  const envStr  = m.environment>70?'pristine and fully restored':m.environment>45?'managed and stable':m.environment>20?'damaged but recovering':'severely depleted';
+  const knowStr = m.education>75?'universal enlightenment':m.education>50?'widespread literacy and discovery':m.education>25?'selective scholarly tradition':'limited institutional learning';
+
+  const bar = ERAS.map((e, i) => {
+    const p = i <= G.currentEraIndex;
+    return '<div class="jb-dot" style="background:' + (p?e.color:'var(--card2)') + ';border:1px solid ' + (p?e.color:'var(--border)') + '"></div>' +
+      (i < ERAS.length-1 ? '<div class="jb-line" style="background:' + (i<G.currentEraIndex?e.color:'var(--border2)') + '"></div>' : '');
+  }).join('');
+
+  document.getElementById('pres-content').innerHTML =
+    '<div class="pres-card"><div class="pres-card-lbl">Current Epoch</div><div class="pres-card-val">' + era.name + '</div><div style="font-family:var(--fm);font-size:.58rem;color:var(--muted2);margin-top:.28rem">' + era.period + '</div></div>' +
+    '<div class="pres-stats">' +
+      '<div class="pres-stat"><div class="pres-stat-lbl">Humanity Score</div><div class="pres-stat-val">' + score + '</div></div>' +
+      '<div class="pres-stat"><div class="pres-stat-lbl">Innovation</div><div class="pres-stat-val">' + Math.round(h.innov) + '</div></div>' +
+      '<div class="pres-stat"><div class="pres-stat-lbl">Sustainability</div><div class="pres-stat-val">' + Math.round(h.sustain) + '</div></div>' +
+      '<div class="pres-stat"><div class="pres-stat-lbl">Stability</div><div class="pres-stat-val">' + Math.round(h.stab) + '</div></div>' +
+    '</div>' +
+    '<div style="background:var(--card);border:1px solid var(--border);padding:1.5rem;margin-bottom:1.4rem">' +
+      '<div style="font-family:var(--fm);font-size:.53rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted2);margin-bottom:.9rem">Civilization Journey</div>' +
+      '<div class="journey-bar">' + bar + '</div>' +
+    '</div>' +
+    '<div class="pres-proj">' +
+      '<div class="pres-proj-title">Future Projection &mdash; 2500 CE</div>' +
+      '<div class="pres-proj-text">' +
+        '<p>Based on the current trajectory, humanity\'s future is <strong>' + outlook + '</strong>.</p><br>' +
+        '<p>Technological advancement has enabled <strong>' + techStr + '</strong>. The planetary environment is <strong>' + envStr + '</strong>. Knowledge systems have reached <strong>' + knowStr + '</strong>.</p><br>' +
+        '<p>Population estimate: <strong>' + (m.population*(score/40)).toFixed(2) + ' billion</strong>. Eras completed: <strong>' + G.currentEraIndex + ' of ' + ERAS.length + '</strong>. Decisions made: <strong>' + G.decisions.length + '</strong>.</p>' +
+      '</div>' +
+    '</div>' +
+    '<div style="text-align:center;margin-top:1rem;display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">' +
+      '<button class="btn btn-gold" data-action="nav-simulation">Return to Simulation</button>' +
+      '<button class="btn btn-outline" data-action="nav-hero">Home</button>' +
+    '</div>';
+}
+
+/* ═══════════════════════════════════════
+   TOAST
+═══════════════════════════════════════ */
+
+function toast(title, body, icon) {
+  const c = document.getElementById('toast-container');
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.innerHTML = '<div class="toast-title">' + (icon||'') + ' ' + esc(title) + '</div><div class="toast-body">' + esc(body) + '</div>';
+  c.appendChild(el);
+  setTimeout(() => { if (el.parentNode) el.remove(); }, 4700);
+}
+
+/* ═══════════════════════════════════════
+   UTILS
+═══════════════════════════════════════ */
+
+function esc(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+/* ═══════════════════════════════════════
+   GLOBAL EVENT DELEGATION
+   ALL clicks handled here — no inline onclick
+═══════════════════════════════════════ */
+
+document.addEventListener('click', function(e) {
+  var btn = e.target.closest('[data-action]');
+  if (!btn) return;
+  var action = btn.getAttribute('data-action');
+
+  if (action === 'start') {
+    reset();
+    showPage('simulation');
+
+  } else if (action === 'continue') {
+    showPage('simulation');
+
+  } else if (action === 'nav-hero')         { showPage('hero'); refreshHeroButtons(); }
+  else if (action === 'nav-simulation')     { showPage('simulation'); }
+  else if (action === 'nav-achievements')   { showPage('achievements'); }
+  else if (action === 'nav-history')        { showPage('history'); }
+  else if (action === 'nav-presentation')   { showPage('presentation'); }
+
+  else if (action === 'choose') {
+    var decId    = btn.getAttribute('data-dec');
+    var choiceId = btn.getAttribute('data-choice');
+    var dec      = DECISIONS.find(function(d){ return d.id === decId; });
+    if (!dec) return;
+    var choice   = dec.choices.find(function(c){ return c.id === choiceId; });
+    if (!choice) return;
+    makeChoice(decId, choiceId, choice.effects);
+
+  } else if (action === 'toggle-custom') {
+    var area = document.getElementById('custom-area');
+    if (area) area.classList.toggle('open');
+
+  } else if (action === 'submit-custom') {
+    var decId2 = btn.getAttribute('data-dec');
+    var txt    = (document.getElementById('custom-text') || {}).value || '';
+    txt = txt.trim();
+    if (!txt) return;
+    makeChoice(decId2, 'custom', parseCustom(txt));
+
+  } else if (action === 'advance-era') {
+    advanceEra();
+
+  } else if (action === 'new-game') {
+    document.getElementById('erase-modal').classList.add('open');
+
+  } else if (action === 'erase-prompt') {
+    document.getElementById('erase-modal').classList.add('open');
+
+  } else if (action === 'erase-cancel') {
+    document.getElementById('erase-modal').classList.remove('open');
+
+  } else if (action === 'erase-confirm') {
+    document.getElementById('erase-modal').classList.remove('open');
+    reset();
+    refreshHeroButtons();
+    showPage('hero');
+    toast('Data Erased', 'Civilization reset to 10,000 BCE. Begin a new journey.', '');
+  }
+});
+
+/* ═══════════════════════════════════════
+   BOOT
+═══════════════════════════════════════ */
+
+(function boot() {
+  load();
+  initHero();
+  refreshHeroButtons();
+  showPage('hero');
+})();
+</script>
+</body>
+</html>
